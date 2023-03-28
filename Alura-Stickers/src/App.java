@@ -1,4 +1,8 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -21,20 +25,34 @@ public class App {
         List<Map<String, String>> listaDeFilmes = parser.parse(body);
 
         // Exibir e manipular os dados
+        var diretorio = new File("imagens/");
+        diretorio.mkdir();
+
         for (Map<String, String> filme : listaDeFilmes) {
-            System.out.printf("\u001b[1m\u001b[41mTitulo:\u001b[m \u001b[1m%s%n", filme.get("title"));
-            System.out.printf("\u001b[1m\u001b[41mImagem:\u001b[m %s%n", filme.get("image"));
-            System.out.printf("\u001b[1m\u001b[41mNota:\u001b[m %s%n", filme.get("imDbRating"));
 
-            // var nota = filme.get("imDbRating") / 10;
+            String urlImagem = filme.get("image");
+            String titulo = filme.get("title");
             double classificacao = Double.parseDouble(filme.get("imDbRating"));
-            int quantidadeDeEstrelas = (int) classificacao;
 
-            for (int i = 1; i <= quantidadeDeEstrelas; i++) {
-                System.out.print("⭐");                
+            String textoFigurinha;
+            InputStream imagemJards;
+            if (classificacao >= 8.0) {
+                textoFigurinha = "TOPZERA";
+                imagemJards = new FileInputStream(new File("imagens/jards.png"));
+            } else {
+                textoFigurinha = "MEIA BOCA";
+                imagemJards = null;
             }
 
-            System.out.println();            
+            InputStream inputStream = new URL(urlImagem).openStream();
+            String nomeArquivo = titulo + ".png";
+
+            var gerador = new GeradorDeFigurinhas();
+            gerador.cria(inputStream, nomeArquivo, textoFigurinha, imagemJards);
+
+            System.out.println(titulo);
+
+            System.out.println();
         }
     }
 }
