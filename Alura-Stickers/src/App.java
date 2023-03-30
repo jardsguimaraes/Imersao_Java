@@ -7,7 +7,7 @@ import java.util.List;
 public class App {
     public static void main(String[] args) throws Exception {
 
-        API api = API.IMDB;
+        API api = API.LINGUAGENS;
         String url = api.getUrl();
         ExtratorConteudo extrator = api.getExtrator();
 
